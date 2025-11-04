@@ -16,10 +16,6 @@ console.log('Yelp API Key loaded:', YELP_API_KEY ? 'Yes (length: ' + YELP_API_KE
 const SPOONACULAR_API_KEY = import.meta.env.VITE_SPOONACULAR_API_KEY || '';
 const SPOONACULAR_BASE_URL = 'https://api.spoonacular.com';
 
-// Unsplash API for food images
-const UNSPLASH_ACCESS_KEY = import.meta.env.VITE_UNSPLASH_ACCESS_KEY || '';
-const UNSPLASH_BASE_URL = 'https://api.unsplash.com';
-
 // Mock data for development (when API keys are not available)
 const MOCK_RESTAURANTS: Restaurant[] = [
   {
