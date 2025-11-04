@@ -8,6 +8,11 @@ export interface Restaurant {
   location?: string;
   url?: string;
   photos?: string[];
+  coordinates?: {
+    latitude: number;
+    longitude: number;
+  };
+  distance?: number; // Distance in meters
 }
 
 export interface Recipe {
@@ -31,5 +36,16 @@ export interface UserPreference {
   restaurantId: string;
   preference: Preference;
   restaurant: Restaurant;
+}
+
+export interface LocationData {
+  latitude: number;
+  longitude: number;
+  address?: string;
+}
+
+export interface DistancePreference {
+  maxDistance: number; // in meters
+  unit: 'km' | 'miles';
 }
 

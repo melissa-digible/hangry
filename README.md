@@ -5,9 +5,11 @@ A Tinder-style food discovery app that helps you decide what to eat by swiping t
 ## Features
 
 - 🎯 **Tinder-style Swiping**: Swipe through restaurant food images and rate them as Yum, Maybe, or Yuck
-- 🏪 **Restaurant Discovery**: Browse restaurants from Yelp API with photos, ratings, and cuisine types
-- 🎨 **Smart Recommendations**: Get suggestions for similar restaurants based on your preferences
-- 👨‍🍳 **Recipe Suggestions**: Find matching recipes to cook at home instead of dining out
+- 📍 **Location-Based Search**: Automatically uses your current location to find nearby restaurants
+- 📏 **Distance Preferences**: Adjustable distance filter (km or miles) to control search radius
+- 🎨 **Smart Preference Learning**: The app learns from your swipes - reduces "yuck" matching restaurants and shows more "yum" similar options
+- 🏪 **Restaurant Discovery**: Browse restaurants from Yelp API with photos, ratings, cuisine types, and distance information
+- 👨‍🍳 **Recipe Suggestions**: Find matching recipes similar to restaurant dishes using Spoonacular's Similar Recipes API
 - 📱 **Beautiful UI**: Modern, responsive design with smooth animations
 
 ## Getting Started

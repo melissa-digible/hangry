@@ -51,15 +51,16 @@ export default function OptionsView({ preferences, onBack }: OptionsViewProps) {
     
     setRestaurants(uniqueRestaurants);
 
-    // Get recipes based on cuisine preferences
+    // Get recipes similar to restaurant dishes
     const recipeService = RecipeService.getInstance();
-    const recipeQueries = cuisineArray.slice(0, 3); // Limit to top 3 cuisines
-    const recipePromises = recipeQueries.map(cuisine => 
-      recipeService.searchRecipes(cuisine, 5)
+    const recipePromises = yumPreferences.slice(0, 5).map(pref => 
+      recipeService.getRecipesForRestaurant(pref.restaurant.name, pref.restaurant.cuisine)
     );
     
     const recipeResults = await Promise.all(recipePromises);
     const allRecipes = recipeResults.flat();
+    
+    // Remove duplicates by ID
     const uniqueRecipes = Array.from(
       new Map(allRecipes.map(r => [r.id, r])).values()
     );
@@ -123,6 +124,13 @@ export default function OptionsView({ preferences, onBack }: OptionsViewProps) {
                       <span className="restaurant-rating">⭐ {restaurant.rating}</span>
                       {restaurant.price && (
                         <span className="restaurant-price">{restaurant.price}</span>
+                      )}
+                      {restaurant.distance !== undefined && (
+                        <span className="restaurant-distance">
+                          📍 {restaurant.distance < 1000 
+                            ? `${Math.round(restaurant.distance)}m` 
+                            : `${(restaurant.distance / 1000).toFixed(1)}km`}
+                        </span>
                       )}
                     </div>
                     <div className="restaurant-cuisine">

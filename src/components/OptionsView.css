@@ -122,6 +122,12 @@
   margin-bottom: 10px;
   font-size: 14px;
   color: #666;
+  flex-wrap: wrap;
+}
+
+.restaurant-distance {
+  color: #667eea;
+  font-weight: 600;
 }
 
 .restaurant-cuisine {
