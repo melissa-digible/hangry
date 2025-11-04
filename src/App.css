@@ -174,22 +174,16 @@ body {
 }
 
 .app-title {
-  color: white;
-  font-size: 36px;
-  font-weight: 700;
-  margin: 0;
-}
-
-.app-title-mobile {
-  display: none;
   font-family: 'Bangers', cursive;
-  letter-spacing: 2px;
+  letter-spacing: 3px;
   text-transform: uppercase;
-  font-size: 42px;
+  font-size: 48px;
   color: #ff6b6b;
-  text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.2),
+  text-shadow: 4px 4px 0px rgba(0, 0, 0, 0.2),
                -1px -1px 0px rgba(255, 255, 255, 0.3);
   transform: rotate(-2deg);
+  margin: 0;
+  line-height: 1;
 }
 
 .options-button {
@@ -444,15 +438,10 @@ body {
     margin-bottom: 20px;
   }
 
-  /* Hide full title on mobile */
+  /* Adjust title size on mobile */
   .app-title {
-    display: none;
-  }
-
-  /* Show fun logo on mobile */
-  .app-title-mobile {
-    display: block;
-    margin: 0;
+    font-size: 36px;
+    letter-spacing: 2px;
   }
 
   .header-actions {

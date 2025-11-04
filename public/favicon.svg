@@ -1,0 +1,38 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle with gradient -->
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff6b6b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ff5252;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <circle cx="32" cy="32" r="32" fill="url(#bgGrad)"/>
+  
+  <!-- Angry mouth/teeth (represents hangry!) -->
+  <g transform="translate(12, 28)">
+    <!-- Mouth opening -->
+    <path d="M 2 8 Q 20 -2, 38 8 L 38 12 Q 20 20, 2 12 Z" 
+          fill="#2d1b1b"/>
+    
+    <!-- Sharp teeth -->
+    <path d="M 4 8 L 7 12 L 10 8 M 12 8 L 15 12 L 18 8 M 20 8 L 23 12 L 26 8 M 28 8 L 31 12 L 34 8 M 36 8 L 38 10 L 38 8" 
+          stroke="white" stroke-width="2" fill="white" stroke-linecap="round"/>
+  </g>
+  
+  <!-- Angry eyes -->
+  <g transform="translate(15, 15)">
+    <!-- Left angry eye -->
+    <path d="M 0 8 L 8 4 L 8 6 L 2 9" fill="#2d1b1b"/>
+    <circle cx="5" cy="10" r="3" fill="#2d1b1b"/>
+    
+    <!-- Right angry eye -->
+    <path d="M 26 4 L 34 8 L 32 9 L 26 6" fill="#2d1b1b"/>
+    <circle cx="29" cy="10" r="3" fill="#2d1b1b"/>
+  </g>
+  
+  <!-- Highlight sparkle -->
+  <circle cx="48" cy="16" r="3" fill="rgba(255,255,255,0.5)"/>
+  <circle cx="44" cy="19" r="2" fill="rgba(255,255,255,0.3)"/>
+</svg>
+
