@@ -3,7 +3,7 @@ import { FilterPreferences } from '../types';
 import './PreferencesScreen.css';
 
 interface PreferencesScreenProps {
-  onStart: (preferences: FilterPreferences, maxDistance: number) => void;
+  onStart: (preferences: FilterPreferences, maxDistance: number, locationMode: 'auto' | 'manual', manualLocation?: string) => void;
   userLocation: { latitude: number; longitude: number } | null;
   locationError: string | null;
   onRefreshLocation: () => void;

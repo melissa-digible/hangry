@@ -23,9 +23,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    // Get the path from the query parameter
-    const path = req.url?.replace('/api/yelp', '') || '/businesses/search';
-    const yelpUrl = `https://api.yelp.com/v3${path}`;
+    // Parse the URL to get query parameters
+    const url = new URL(req.url || '', `https://${req.headers.host}`);
+    const queryString = url.search; // Gets everything after ?
+    
+    // Get the path after /api/yelp
+    let path = url.pathname.replace('/api/yelp', '') || '/businesses/search';
+    
+    // If path is empty or just /, default to /businesses/search
+    if (!path || path === '/') {
+      path = '/businesses/search';
+    }
+    
+    const yelpUrl = `https://api.yelp.com/v3${path}${queryString}`;
+    
+    console.log('Proxying request to Yelp:', yelpUrl);
 
     const response = await fetch(yelpUrl, {
       headers: {

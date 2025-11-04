@@ -1,0 +1,9 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/yelp/:path*",
+      "destination": "/api/yelp"
+    }
+  ]
+}
+
