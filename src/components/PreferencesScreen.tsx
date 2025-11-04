@@ -39,6 +39,8 @@ export default function PreferencesScreen({
   const [openNow, setOpenNow] = useState(false);
   const [priceRange, setPriceRange] = useState<string[]>(['$', '$$', '$$$', '$$$$']);
   const [maxDistance, setMaxDistance] = useState(10); // miles
+  const [locationMode, setLocationMode] = useState<'auto' | 'manual'>('auto');
+  const [manualLocation, setManualLocation] = useState('San Francisco, CA');
 
   const toggleCategory = (category: string) => {
     setExcludedCategories(prev => 
@@ -66,7 +68,9 @@ export default function PreferencesScreen({
         openNow,
         priceRange: finalPriceRange
       },
-      maxDistance
+      maxDistance,
+      locationMode,
+      locationMode === 'manual' ? manualLocation : undefined
     );
   };
 
@@ -80,26 +84,58 @@ export default function PreferencesScreen({
         <div className="preferences-section">
           <h2 className="section-title">📍 Location & Distance</h2>
           <div className="section-content">
-            {locationError ? (
-              <div className="location-status location-warning">
-                <span>⚠️ {locationError}</span>
-              </div>
-            ) : userLocation ? (
-              <div className="location-status location-success">
-                <span>✓ Using your current location</span>
-              </div>
+            {/* Location Mode Toggle */}
+            <div className="location-mode-toggle">
+              <button
+                className={`location-mode-button ${locationMode === 'auto' ? 'active' : ''}`}
+                onClick={() => setLocationMode('auto')}
+              >
+                📍 Use My Location
+              </button>
+              <button
+                className={`location-mode-button ${locationMode === 'manual' ? 'active' : ''}`}
+                onClick={() => setLocationMode('manual')}
+              >
+                ✏️ Enter Location
+              </button>
+            </div>
+
+            {locationMode === 'auto' ? (
+              <>
+                {locationError ? (
+                  <div className="location-status location-warning">
+                    <span>⚠️ {locationError}</span>
+                  </div>
+                ) : userLocation ? (
+                  <div className="location-status location-success">
+                    <span>✓ Using your current location</span>
+                  </div>
+                ) : (
+                  <div className="location-status">
+                    <span>📍 Getting your location...</span>
+                  </div>
+                )}
+                
+                <button 
+                  className="refresh-location-button"
+                  onClick={onRefreshLocation}
+                >
+                  🔄 Refresh Location
+                </button>
+              </>
             ) : (
-              <div className="location-status">
-                <span>📍 Getting your location...</span>
+              <div className="manual-location-input">
+                <label htmlFor="manual-location">Enter city, address, or zip code:</label>
+                <input
+                  id="manual-location"
+                  type="text"
+                  value={manualLocation}
+                  onChange={(e) => setManualLocation(e.target.value)}
+                  placeholder="e.g., San Francisco, CA or 94102"
+                  className="location-text-input"
+                />
               </div>
             )}
-            
-            <button 
-              className="refresh-location-button"
-              onClick={onRefreshLocation}
-            >
-              🔄 Refresh Location
-            </button>
 
             <div className="distance-control">
               <label className="distance-label">

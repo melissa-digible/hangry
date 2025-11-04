@@ -28,6 +28,8 @@ function App() {
     priceRange: ['$', '$$', '$$$', '$$$$'],
   });
   const [showDistanceSettings, setShowDistanceSettings] = useState(false);
+  const [locationMode, setLocationMode] = useState<'auto' | 'manual'>('auto');
+  const [manualLocation, setManualLocation] = useState('San Francisco, CA');
 
   useEffect(() => {
     getUserLocation();
@@ -43,9 +45,13 @@ function App() {
       // Convert miles to meters for API call
       const maxDistanceMeters = distancePreference.maxDistance * 1609.34;
       
+      // Use manual location if in manual mode, otherwise use detected location
+      const locationToUse = locationMode === 'manual' ? undefined : (userLocation || undefined);
+      const locationStringToUse = locationMode === 'manual' ? manualLocation : 'San Francisco';
+      
       const fetchedRestaurants = await restaurantService.fetchRestaurants(
-        userLocation || undefined,
-        'San Francisco',
+        locationToUse,
+        locationStringToUse,
         50,
         maxDistanceMeters,
         filterPreferences
@@ -55,10 +61,15 @@ function App() {
       setLoading(false);
     };
 
-    if ((userLocation || locationError) && !showPreferences) {
+    // Load restaurants when:
+    // - Manual mode: always ready
+    // - Auto mode: when we have location or an error
+    const isReady = locationMode === 'manual' || userLocation || locationError;
+    
+    if (isReady && !showPreferences) {
       loadRestaurantsAsync();
     }
-  }, [userLocation, distancePreference, locationError, showPreferences, filterPreferences]);
+  }, [userLocation, distancePreference, locationError, showPreferences, filterPreferences, locationMode, manualLocation]);
 
   useEffect(() => {
       // Apply preference-based filtering when preferences change
@@ -107,12 +118,21 @@ function App() {
     );
   };
 
-  const handleStartSwiping = (prefs: FilterPreferences, maxDist: number) => {
+  const handleStartSwiping = (
+    prefs: FilterPreferences, 
+    maxDist: number, 
+    locMode: 'auto' | 'manual',
+    manualLoc?: string
+  ) => {
     setFilterPreferences(prefs);
     setDistancePreference({
       maxDistance: maxDist,
       unit: 'miles',
     });
+    setLocationMode(locMode);
+    if (manualLoc) {
+      setManualLocation(manualLoc);
+    }
     setShowPreferences(false);
   };
 
