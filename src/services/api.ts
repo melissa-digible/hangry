@@ -7,8 +7,13 @@ const YELP_API_KEY = import.meta.env.VITE_YELP_API_KEY || '';
 // Use proxy/serverless function to avoid CORS issues
 const YELP_BASE_URL = '/api/yelp';
 
-// Debug: Log API key status (remove in production)
+// Debug: Log API key status
 console.log('Yelp API Key loaded:', YELP_API_KEY ? 'Yes (length: ' + YELP_API_KEY.length + ')' : 'No');
+console.log('Environment check:', {
+  isDev: import.meta.env.DEV,
+  mode: import.meta.env.MODE,
+  hasKey: !!import.meta.env.VITE_YELP_API_KEY
+});
 
 // Spoonacular Recipe API Configuration
 const SPOONACULAR_API_KEY = import.meta.env.VITE_SPOONACULAR_API_KEY || '';
