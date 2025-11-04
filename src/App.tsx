@@ -189,6 +189,7 @@ function App() {
     <div className="app">
       <div className="app-header">
         <h1 className="app-title">🍽️ Hangry</h1>
+        <h1 className="app-title-mobile">🍽️</h1>
         <div className="header-actions">
           <button 
             className="settings-button"

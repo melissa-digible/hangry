@@ -35,6 +35,7 @@
   background: linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.5), transparent);
   padding: 30px 20px 20px;
   color: white;
+  transition: all 0.3s ease;
 }
 
 .food-card-info {
@@ -80,5 +81,113 @@
   font-size: 12px;
   font-weight: 600;
   border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Tablet responsiveness */
+@media (max-width: 768px) {
+  .food-card {
+    max-width: 100%;
+    height: 550px;
+  }
+
+  .food-card-name {
+    font-size: 26px;
+  }
+
+  .food-card-meta {
+    gap: 12px;
+  }
+
+  .food-card-overlay {
+    padding: 25px 18px 18px;
+  }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 600px) {
+  .food-card {
+    width: 95%;
+    height: 500px;
+  }
+
+  /* Move overlay to top on mobile */
+  .food-card-overlay {
+    top: 0;
+    bottom: auto;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.4), transparent);
+    padding: 15px 15px 25px;
+  }
+
+  .food-card-name {
+    font-size: 24px;
+  }
+
+  .food-card-meta {
+    gap: 10px;
+    font-size: 13px;
+  }
+
+  .food-card-rating,
+  .food-card-price,
+  .food-card-location {
+    font-size: 13px;
+  }
+
+  .cuisine-tag {
+    padding: 4px 10px;
+    font-size: 11px;
+  }
+}
+
+/* Small mobile devices */
+@media (max-width: 400px) {
+  .food-card {
+    height: 450px;
+  }
+
+  .food-card-overlay {
+    padding: 12px 12px 20px;
+  }
+
+  .food-card-name {
+    font-size: 22px;
+  }
+
+  .food-card-meta {
+    gap: 8px;
+    font-size: 12px;
+  }
+
+  .cuisine-tag {
+    padding: 3px 8px;
+    font-size: 10px;
+  }
+}
+
+/* Landscape mobile orientation */
+@media (max-height: 600px) and (orientation: landscape) {
+  .food-card {
+    height: 380px;
+  }
+
+  /* Keep overlay at top in landscape on mobile */
+  .food-card-overlay {
+    top: 0;
+    bottom: auto;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.4), transparent);
+    padding: 12px 12px 20px;
+  }
+
+  .food-card-name {
+    font-size: 20px;
+  }
+
+  .food-card-meta {
+    gap: 8px;
+  }
+
+  .food-card-info {
+    gap: 8px;
+  }
 }
 

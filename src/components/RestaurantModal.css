@@ -518,6 +518,7 @@
 @media (max-width: 768px) {
   .modal-backdrop {
     padding: 0;
+    align-items: flex-start;
   }
 
   .restaurant-modal {
@@ -530,8 +531,27 @@
     height: 250px;
   }
 
+  .modal-header-overlay {
+    padding: 20px;
+  }
+
   .modal-restaurant-name {
     font-size: 24px;
+  }
+
+  .modal-restaurant-meta {
+    font-size: 15px;
+    gap: 12px;
+  }
+
+  .modal-nav {
+    padding: 0 16px;
+    gap: 4px;
+  }
+
+  .modal-nav-button {
+    padding: 14px 12px;
+    font-size: 14px;
   }
 
   .modal-content {
@@ -540,21 +560,263 @@
 
   .modal-section h2 {
     font-size: 22px;
+    margin-bottom: 15px;
   }
 
-  .photos-grid,
+  .detail-group {
+    padding: 16px;
+    margin-bottom: 15px;
+  }
+
+  .detail-group h3 {
+    font-size: 16px;
+  }
+
+  .detail-group p {
+    font-size: 14px;
+  }
+
+  .photos-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+  }
+
   .recipes-grid {
     grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .recipe-card-image-modal {
+    height: 160px;
+  }
+
+  .review-card {
+    padding: 16px;
   }
 
   .review-header {
     flex-direction: column;
     align-items: flex-start;
+    gap: 10px;
   }
 
   .review-meta {
     flex-direction: row;
     align-items: center;
+    width: 100%;
+  }
+
+  .review-avatar {
+    width: 36px;
+    height: 36px;
+  }
+
+  .review-text {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 600px) {
+  .modal-close {
+    width: 36px;
+    height: 36px;
+    font-size: 20px;
+    top: 10px;
+    right: 10px;
+  }
+
+  .modal-header {
+    height: 220px;
+  }
+
+  .modal-header-overlay {
+    padding: 15px;
+  }
+
+  .modal-restaurant-name {
+    font-size: 22px;
+  }
+
+  .modal-restaurant-meta {
+    font-size: 14px;
+    gap: 10px;
+  }
+
+  .modal-rating,
+  .modal-price,
+  .modal-distance {
+    padding: 4px 10px;
+    font-size: 14px;
+  }
+
+  .modal-cuisine-tag {
+    padding: 4px 10px;
+    font-size: 12px;
+  }
+
+  .modal-nav {
+    padding: 0 12px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .modal-nav-button {
+    padding: 12px 10px;
+    font-size: 13px;
+    flex-shrink: 0;
+    min-width: 80px;
+  }
+
+  .modal-content {
+    padding: 15px;
+  }
+
+  .modal-section h2 {
+    font-size: 20px;
+    margin-bottom: 12px;
+  }
+
+  .detail-group {
+    padding: 14px;
+    margin-bottom: 12px;
+  }
+
+  .detail-group h3 {
+    font-size: 15px;
+    margin-bottom: 10px;
+  }
+
+  .detail-group p {
+    font-size: 13px;
+  }
+
+  .hours-row {
+    padding: 6px 0;
+    font-size: 13px;
+  }
+
+  .cuisine-item {
+    padding: 5px 12px;
+    font-size: 13px;
+  }
+
+  .price-indicator {
+    font-size: 20px;
+  }
+
+  .price-description {
+    font-size: 13px;
+  }
+
+  .photos-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .recipes-intro {
+    padding: 12px 15px;
+    font-size: 14px;
+  }
+
+  .recipes-grid {
+    gap: 12px;
+  }
+
+  .recipe-card-image-modal {
+    height: 140px;
+  }
+
+  .recipe-card-content-modal {
+    padding: 12px;
+  }
+
+  .recipe-title-modal {
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+
+  .recipe-meta-modal {
+    font-size: 12px;
+    gap: 10px;
+  }
+
+  .recipe-summary-modal {
+    font-size: 12px;
+  }
+
+  .recipe-link-modal {
+    font-size: 13px;
+  }
+
+  .review-card {
+    padding: 14px;
+  }
+
+  .review-avatar {
+    width: 32px;
+    height: 32px;
+  }
+
+  .review-username {
+    font-size: 14px;
+  }
+
+  .review-rating {
+    font-size: 13px;
+  }
+
+  .review-date {
+    font-size: 12px;
+  }
+
+  .review-text {
+    font-size: 13px;
+  }
+
+  .loading-message,
+  .empty-state {
+    padding: 30px 15px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 400px) {
+  .modal-header {
+    height: 200px;
+  }
+
+  .modal-restaurant-name {
+    font-size: 20px;
+  }
+
+  .modal-nav-button {
+    font-size: 12px;
+    padding: 10px 8px;
+    min-width: 70px;
+  }
+
+  .modal-section h2 {
+    font-size: 18px;
+  }
+
+  .recipe-card-image-modal {
+    height: 120px;
+  }
+}
+
+/* Landscape orientation for modal */
+@media (max-height: 600px) and (orientation: landscape) {
+  .modal-header {
+    height: 180px;
+  }
+
+  .modal-content {
+    padding: 15px;
+  }
+
+  .modal-section h2 {
+    font-size: 20px;
+    margin-bottom: 10px;
   }
 }
 

@@ -1302,6 +1302,57 @@
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
+  .options-view {
+    padding: 15px;
+  }
+
+  .options-title {
+    font-size: 36px;
+  }
+
+  .options-tabs {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .tab-button {
+    padding: 10px 20px;
+    font-size: 15px;
+  }
+
+  .sort-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 12px 15px;
+  }
+
+  .sort-dropdown {
+    width: 100%;
+    min-width: auto;
+  }
+
+  .restaurants-grid,
+  .recipes-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+  }
+
+  .restaurant-card-image,
+  .recipe-card-image {
+    height: 180px;
+  }
+
+  .restaurant-card-content,
+  .recipe-card-content {
+    padding: 18px;
+  }
+
+  .restaurant-card-name,
+  .recipe-card-title {
+    font-size: 20px;
+  }
+
   .duel-mode-selection {
     padding: 20px;
   }
@@ -1335,15 +1386,32 @@
   
   .duel-container {
     flex-direction: column;
+    gap: 20px;
+    padding: 15px;
   }
   
   .duel-vs {
     transform: rotate(90deg);
-    margin: 20px 0;
+    margin: 15px 0;
+    width: 80px;
+    height: 80px;
+    font-size: 40px;
   }
   
   .duel-card {
     max-width: 100%;
+  }
+
+  .duel-card-image {
+    height: 250px;
+  }
+
+  .duel-card-content {
+    padding: 20px;
+  }
+
+  .duel-card-name {
+    font-size: 22px;
   }
   
   .duel-winner-image {
@@ -1382,6 +1450,259 @@
   
   .sparkle {
     font-size: 24px;
+  }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 600px) {
+  .options-view {
+    padding: 10px;
+    padding-bottom: 30px;
+  }
+
+  .back-button {
+    padding: 8px 16px;
+    font-size: 14px;
+    margin-bottom: 15px;
+  }
+
+  .options-title {
+    font-size: 32px;
+    margin-bottom: 15px;
+  }
+
+  .options-tabs {
+    gap: 6px;
+    margin-bottom: 20px;
+    flex-direction: column;
+  }
+
+  .tab-button {
+    padding: 12px 20px;
+    font-size: 14px;
+    width: 100%;
+  }
+
+  .sort-controls {
+    padding: 10px;
+  }
+
+  .sort-controls label {
+    font-size: 14px;
+  }
+
+  .sort-dropdown {
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+
+  .restaurants-grid,
+  .recipes-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .restaurant-card-image,
+  .recipe-card-image {
+    height: 160px;
+  }
+
+  .restaurant-card-content,
+  .recipe-card-content {
+    padding: 15px;
+  }
+
+  .restaurant-card-name,
+  .recipe-card-title {
+    font-size: 18px;
+  }
+
+  .restaurant-card-meta,
+  .recipe-meta {
+    font-size: 13px;
+    gap: 10px;
+  }
+
+  .cuisine-badge {
+    font-size: 11px;
+    padding: 3px 10px;
+  }
+
+  .restaurant-view-details {
+    padding: 10px 16px;
+    font-size: 14px;
+    margin-top: 12px;
+  }
+
+  .duel-mode-selection {
+    padding: 15px 10px;
+  }
+
+  .duel-selection-subtitle {
+    font-size: 16px;
+    margin-bottom: 20px;
+  }
+
+  .duel-mode-options {
+    gap: 15px;
+  }
+
+  .duel-mode-option {
+    padding: 25px 15px;
+  }
+
+  .duel-mode-icon {
+    font-size: 50px;
+    margin-bottom: 15px;
+  }
+
+  .duel-mode-title {
+    font-size: 20px;
+  }
+
+  .duel-mode-description {
+    font-size: 14px;
+  }
+
+  .duel-mode-badge {
+    font-size: 12px;
+    padding: 6px 16px;
+  }
+
+  .duel-counter {
+    font-size: 16px;
+    padding: 8px;
+  }
+
+  .duel-container {
+    padding: 10px;
+    gap: 15px;
+  }
+
+  .duel-vs {
+    width: 70px;
+    height: 70px;
+    font-size: 36px;
+    margin: 10px 0;
+  }
+
+  .duel-card-image {
+    height: 200px;
+  }
+
+  .duel-card-content {
+    padding: 18px;
+  }
+
+  .duel-card-name {
+    font-size: 20px;
+  }
+
+  .duel-card-meta {
+    font-size: 13px;
+    gap: 12px;
+  }
+
+  .duel-choose-text {
+    font-size: 24px;
+  }
+
+  .duel-winner-container {
+    padding: 20px 10px;
+  }
+
+  .duel-winner-image {
+    height: 250px;
+  }
+
+  .duel-winner-content {
+    padding: 20px;
+  }
+
+  .duel-winner-name {
+    font-size: 24px;
+  }
+
+  .duel-winner-meta {
+    font-size: 16px;
+    gap: 15px;
+  }
+
+  .duel-view-details-button,
+  .duel-restart-button {
+    padding: 12px 24px;
+    font-size: 16px;
+  }
+
+  .winner-crown {
+    font-size: 50px;
+    top: -15px;
+  }
+
+  .food-confetti {
+    font-size: 25px;
+  }
+
+  .fire-flame {
+    width: 35px;
+    height: 70px;
+  }
+
+  .flame-2,
+  .flame-3,
+  .flame-4 {
+    height: 90px;
+  }
+
+  .winner-text {
+    font-size: 40px;
+  }
+
+  .sparkle {
+    font-size: 20px;
+  }
+}
+
+/* Small mobile devices */
+@media (max-width: 400px) {
+  .options-title {
+    font-size: 28px;
+  }
+
+  .tab-button {
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+
+  .restaurant-card-name,
+  .recipe-card-title {
+    font-size: 17px;
+  }
+
+  .duel-mode-icon {
+    font-size: 45px;
+  }
+
+  .duel-mode-title {
+    font-size: 18px;
+  }
+
+  .duel-card-image {
+    height: 180px;
+  }
+
+  .duel-card-name {
+    font-size: 18px;
+  }
+
+  .duel-vs {
+    width: 60px;
+    height: 60px;
+    font-size: 32px;
+  }
+
+  .winner-text {
+    font-size: 36px;
   }
 }
 
