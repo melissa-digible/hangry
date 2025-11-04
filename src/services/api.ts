@@ -2,18 +2,11 @@ import axios from 'axios';
 import { Restaurant, Recipe, LocationData, UserPreference, FilterPreferences } from '../types';
 
 // Yelp Fusion API Configuration
-// Note: In production, these should be stored in environment variables
-const YELP_API_KEY = import.meta.env.VITE_YELP_API_KEY || '';
-// Use proxy/serverless function to avoid CORS issues
+// Note: API key is handled by serverless function, not exposed to client
 const YELP_BASE_URL = '/api/yelp';
 
-// Debug: Log API key status
-console.log('Yelp API Key loaded:', YELP_API_KEY ? 'Yes (length: ' + YELP_API_KEY.length + ')' : 'No');
-console.log('Environment check:', {
-  isDev: import.meta.env.DEV,
-  mode: import.meta.env.MODE,
-  hasKey: !!import.meta.env.VITE_YELP_API_KEY
-});
+// Debug: Log API configuration
+console.log('Yelp API configured to use serverless function:', YELP_BASE_URL);
 
 // Spoonacular Recipe API Configuration
 const SPOONACULAR_API_KEY = import.meta.env.VITE_SPOONACULAR_API_KEY || '';
@@ -219,12 +212,10 @@ export class RestaurantService {
     filterPreferences?: FilterPreferences
   ): Promise<Restaurant[]> {
     console.log('fetchRestaurants called with:', { location, locationString, limit, maxDistance });
-    console.log('YELP_API_KEY exists:', !!YELP_API_KEY, 'Length:', YELP_API_KEY?.length || 0);
     
-    // If Yelp API key is available, use real API
-    if (YELP_API_KEY) {
-      console.log('Attempting to fetch from Yelp API...');
-      try {
+    // Use serverless function to fetch from Yelp API
+    console.log('Attempting to fetch from Yelp API via serverless function...');
+    try {
         // Randomize the sort order to get different results each time
         const sortOptions = ['rating', 'best_match', 'distance'];
         const randomSort = sortOptions[Math.floor(Math.random() * sortOptions.length)];
@@ -266,15 +257,8 @@ export class RestaurantService {
         console.log('Making Yelp API request with params:', params);
         console.log('Using YELP_BASE_URL:', YELP_BASE_URL);
         
-        // In development, use proxy (proxy adds auth header)
-        // In production, we'd need a backend server
-        const headers: any = {};
-        if (!import.meta.env.DEV) {
-          headers['Authorization'] = `Bearer ${YELP_API_KEY}`;
-        }
-        
+        // Serverless function handles authentication, no need for headers here
         const response = await axios.get(`${YELP_BASE_URL}/businesses/search`, {
-          headers,
           params,
         });
         
@@ -409,38 +393,6 @@ export class RestaurantService {
         return this.restaurants;
       }
     }
-
-    // Use mock data for development with coordinates
-    console.log('⚠️ No Yelp API key found, using mock data');
-    let mockRestaurants = this.addMockCoordinates([...MOCK_RESTAURANTS], location);
-    
-    // Apply filters to mock data
-    if (filterPreferences) {
-      // Apply category exclusion filter
-      if (filterPreferences.excludedCategories && filterPreferences.excludedCategories.length > 0) {
-        mockRestaurants = mockRestaurants.filter((restaurant: Restaurant) => {
-          return !restaurant.cuisine.some(cuisine => 
-            filterPreferences.excludedCategories.some(excluded => 
-              cuisine.toLowerCase().includes(excluded.toLowerCase()) ||
-              excluded.toLowerCase().includes(cuisine.toLowerCase())
-            )
-          );
-        });
-      }
-
-      // Apply price filter
-      if (filterPreferences.priceRange && filterPreferences.priceRange.length > 0) {
-        mockRestaurants = mockRestaurants.filter((restaurant: Restaurant) => 
-          !restaurant.price || filterPreferences.priceRange.includes(restaurant.price)
-        );
-      }
-
-      // Note: openNow filter can't be applied to mock data as we don't have business hours
-      // In a real scenario with API, this would be handled by Yelp
-    }
-    
-    this.restaurants = mockRestaurants;
-    return this.restaurants;
   }
 
   private addMockCoordinates(restaurants: Restaurant[], location?: LocationData): Restaurant[] {
@@ -547,26 +499,15 @@ export class RestaurantService {
   async getRestaurantDetails(restaurantId: string): Promise<any> {
     console.log('Fetching details for restaurant:', restaurantId);
     
-    if (YELP_API_KEY) {
-      try {
-        const headers: any = {};
-        if (!import.meta.env.DEV) {
-          headers['Authorization'] = `Bearer ${YELP_API_KEY}`;
-        }
-        
-        const response = await axios.get(`${YELP_BASE_URL}/businesses/${restaurantId}`, {
-          headers,
-        });
-        
-        console.log('Restaurant details fetched successfully');
-        return response.data;
-      } catch (error) {
-        console.error('Error fetching restaurant details:', error);
-        return null;
-      }
+    try {
+      const response = await axios.get(`${YELP_BASE_URL}/businesses/${restaurantId}`);
+      
+      console.log('Restaurant details fetched successfully');
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching restaurant details:', error);
+      return null;
     }
-    
-    return null;
   }
 
   // Fetch reviews for a specific restaurant
@@ -575,32 +516,22 @@ export class RestaurantService {
   async getRestaurantReviews(restaurantId: string): Promise<any> {
     console.log('Fetching reviews for restaurant:', restaurantId);
     
-    if (YELP_API_KEY) {
-      try {
-        const headers: any = {};
-        if (!import.meta.env.DEV) {
-          headers['Authorization'] = `Bearer ${YELP_API_KEY}`;
-        }
-        
-        // Note: This endpoint requires special approval from Yelp
-        const response = await axios.get(`${YELP_BASE_URL}/businesses/${restaurantId}/reviews`, {
-          headers,
-          params: {
-            limit: 3,
-            sort_by: 'yelp_sort',
-          },
-        });
-        
-        console.log('Restaurant reviews fetched successfully');
-        return response.data;
-      } catch (error) {
-        console.error('Error fetching restaurant reviews:', error);
-        console.log('Note: Yelp reviews endpoint requires special API approval');
-        return null;
-      }
+    try {
+      // Note: This endpoint requires special approval from Yelp
+      const response = await axios.get(`${YELP_BASE_URL}/businesses/${restaurantId}/reviews`, {
+        params: {
+          limit: 3,
+          sort_by: 'yelp_sort',
+        },
+      });
+      
+      console.log('Restaurant reviews fetched successfully');
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching restaurant reviews:', error);
+      console.log('Note: Yelp reviews endpoint requires special API approval');
+      return null;
     }
-    
-    return null;
   }
 }
 
