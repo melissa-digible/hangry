@@ -440,54 +440,75 @@ export class RestaurantService {
   ): Restaurant[] {
     const { likedCuisines, dislikedCuisines, cuisineScores } = analyzePreferences(preferences);
     
+    // Get IDs of restaurants that have been rated
+    const ratedRestaurantIds = new Set(preferences.map(p => p.restaurantId));
+    
     // Score each restaurant based on preferences
     const scoredRestaurants = this.restaurants.map(restaurant => {
+      // Skip restaurants that have already been rated
+      if (ratedRestaurantIds.has(restaurant.id)) {
+        return { restaurant, score: -999 }; // Mark as already rated
+      }
+      
       let score = restaurant.rating || 0;
       
       // Check cuisine matches
+      let hasDislikedCuisine = false;
+      let hasLikedCuisine = false;
+      
       restaurant.cuisine.forEach(cuisine => {
         const lowerCuisine = cuisine.toLowerCase();
         const cuisineScore = cuisineScores.get(lowerCuisine) || 0;
-        score += cuisineScore;
+        score += cuisineScore * 0.5; // Reduce the weight of cuisine scores
         
-        // Heavy penalty for disliked cuisines
+        // Moderate penalty for disliked cuisines
         if (dislikedCuisines.has(lowerCuisine)) {
-          score -= 10;
+          hasDislikedCuisine = true;
+          score -= 3; // Reduced from 10 to 3
         }
         
         // Bonus for liked cuisines
         if (likedCuisines.has(lowerCuisine)) {
-          score += 5;
+          hasLikedCuisine = true;
+          score += 3; // Reduced from 5 to 3 for balance
         }
       });
 
       // Distance bonus (closer = better)
       if (restaurant.distance !== undefined && maxDistance) {
-        const distanceScore = (maxDistance - restaurant.distance) / maxDistance * 2;
+        const distanceScore = (maxDistance - restaurant.distance) / maxDistance * 1;
         score += distanceScore;
       }
 
-      return { restaurant, score };
+      return { restaurant, score, hasDislikedCuisine, hasLikedCuisine };
     });
 
-    // Filter out heavily disliked restaurants and sort by score
+    // Filter out already rated restaurants and sort by score
+    // Use a more lenient threshold to keep more options
     const filtered = scoredRestaurants
-      .filter(item => item.score > -5) // Remove restaurants with very negative scores
-      .sort((a, b) => b.score - a.score)
+      .filter(item => item.score > -999) // Remove already rated restaurants
+      .sort((a, b) => {
+        // Prioritize liked cuisines, then avoid disliked, then by score
+        if (a.hasLikedCuisine && !b.hasLikedCuisine) return -1;
+        if (!a.hasLikedCuisine && b.hasLikedCuisine) return 1;
+        if (a.hasDislikedCuisine && !b.hasDislikedCuisine) return 1;
+        if (!a.hasDislikedCuisine && b.hasDislikedCuisine) return -1;
+        return b.score - a.score;
+      })
       .map(item => item.restaurant);
 
-    // If we have strong preferences, prioritize matching restaurants
-    if (likedCuisines.size > 0 || dislikedCuisines.size > 0) {
-      const matching = filtered.filter(r =>
-        r.cuisine.some(c => likedCuisines.has(c.toLowerCase()))
-      );
-      const nonMatching = filtered.filter(r =>
-        !r.cuisine.some(c => likedCuisines.has(c.toLowerCase()))
-      );
-      return [...matching, ...nonMatching];
+    // If filtered list is too small (less than 5), be more lenient
+    if (filtered.length < 5) {
+      // Include all unrated restaurants, even with disliked cuisines
+      const allUnrated = scoredRestaurants
+        .filter(item => item.score > -999)
+        .sort((a, b) => b.score - a.score)
+        .map(item => item.restaurant);
+      
+      return allUnrated.length > 0 ? allUnrated : this.restaurants;
     }
 
-    return filtered;
+    return filtered.length > 0 ? filtered : this.restaurants;
   }
 
   getAllRestaurants(): Restaurant[] {

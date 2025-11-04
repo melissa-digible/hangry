@@ -39,6 +39,8 @@ export default function OptionsView({ preferences, onBack }: OptionsViewProps) {
     const yumPreferences = preferences.filter(p => p.preference === 'yum');
     
     if (yumPreferences.length === 0) {
+      setRestaurants([]);
+      setRecipes([]);
       setLoading(false);
       return;
     }
@@ -64,16 +66,21 @@ export default function OptionsView({ preferences, onBack }: OptionsViewProps) {
       preferences.filter(p => p.preference === 'maybe').map(p => p.restaurantId)
     );
     
-    // Combine yum restaurants with similar ones, excluding yuck/maybe and removing duplicates
+    // ALWAYS include yum restaurants first, then add similar ones
+    const yumRestaurants = yumPreferences.map(p => p.restaurant);
+    const additionalRestaurants = similarRestaurants.filter(r => 
+      !yumRestaurantIds.has(r.id) && 
+      !yuckRestaurantIds.has(r.id) &&
+      !maybeRestaurantIds.has(r.id)
+    ).slice(0, 20); // Limit additional recommendations to 20
+    
+    // Combine with yum restaurants always first
     const uniqueRestaurants = [
-      ...yumPreferences.map(p => p.restaurant),
-      ...similarRestaurants.filter(r => 
-        !yumRestaurantIds.has(r.id) && 
-        !yuckRestaurantIds.has(r.id) &&
-        !maybeRestaurantIds.has(r.id)
-      )
+      ...yumRestaurants,
+      ...additionalRestaurants
     ];
     
+    console.log('OptionsView: Loaded', yumRestaurants.length, 'yum restaurants and', additionalRestaurants.length, 'similar restaurants');
     setRestaurants(uniqueRestaurants);
 
     // Get recipes similar to restaurant dishes
