@@ -392,7 +392,6 @@ export class RestaurantService {
         this.restaurants = mockRestaurants;
         return this.restaurants;
       }
-    }
   }
 
   private addMockCoordinates(restaurants: Restaurant[], location?: LocationData): Restaurant[] {
