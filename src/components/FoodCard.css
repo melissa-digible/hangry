@@ -1,0 +1,84 @@
+.food-card {
+  position: absolute;
+  width: 90%;
+  max-width: 400px;
+  height: 600px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  cursor: grab;
+  user-select: none;
+}
+
+.food-card:active {
+  cursor: grabbing;
+}
+
+.food-card-image-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.food-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.food-card-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.5), transparent);
+  padding: 30px 20px 20px;
+  color: white;
+}
+
+.food-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.food-card-name {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.food-card-meta {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.food-card-rating,
+.food-card-price,
+.food-card-location {
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0.95;
+}
+
+.food-card-cuisine {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 5px;
+}
+
+.cuisine-tag {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+

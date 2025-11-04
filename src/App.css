@@ -1,0 +1,249 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.app {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  position: relative;
+}
+
+.app-header {
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  z-index: 100;
+}
+
+.app-title {
+  color: white;
+  font-size: 36px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.options-button {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.options-button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.options-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.swipe-container {
+  position: relative;
+  width: 90%;
+  max-width: 400px;
+  height: 600px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  gap: 20px;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.food-card-stack {
+  position: absolute;
+  pointer-events: none;
+}
+
+.swipe-feedback {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 72px;
+  font-weight: 700;
+  z-index: 1000;
+  pointer-events: none;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.swipe-yum {
+  color: #4ade80;
+}
+
+.swipe-yuck {
+  color: #f87171;
+}
+
+.empty-state {
+  text-align: center;
+  color: white;
+  padding: 40px 20px;
+}
+
+.empty-state h2 {
+  font-size: 36px;
+  margin-bottom: 15px;
+}
+
+.empty-state p {
+  font-size: 18px;
+  margin-bottom: 30px;
+  opacity: 0.9;
+}
+
+.primary-button,
+.secondary-button {
+  padding: 15px 30px;
+  border-radius: 30px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  margin: 10px;
+  transition: all 0.3s ease;
+}
+
+.primary-button {
+  background: white;
+  color: #667eea;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.primary-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.secondary-button {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+}
+
+.secondary-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.action-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  width: 100%;
+  max-width: 500px;
+  z-index: 100;
+}
+
+.action-button {
+  flex: 1;
+  padding: 18px 25px;
+  border: none;
+  border-radius: 50px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  color: white;
+}
+
+.action-button-yuck {
+  background: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+}
+
+.action-button-yuck:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+}
+
+.action-button-maybe {
+  background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%);
+}
+
+.action-button-maybe:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 6px 20px rgba(100, 116, 139, 0.4);
+}
+
+.action-button-yum {
+  background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+}
+
+.action-button-yum:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 6px 20px rgba(34, 197, 94, 0.4);
+}
+
+.action-button:active {
+  transform: translateY(0) scale(0.95);
+}
+
+@media (max-width: 600px) {
+  .app-title {
+    font-size: 28px;
+  }
+
+  .swipe-container {
+    height: 500px;
+  }
+
+  .action-button {
+    padding: 15px 20px;
+    font-size: 16px;
+  }
+
+  .options-button {
+    font-size: 12px;
+    padding: 8px 16px;
+  }
+}
+
