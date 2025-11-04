@@ -117,6 +117,33 @@
   margin: 0 auto;
 }
 
+.restaurant-section {
+  margin-bottom: 50px;
+}
+
+.restaurant-section .section-title {
+  color: #ffffff;
+  font-size: 42px;
+  font-weight: 700;
+  margin: 0 0 10px 0;
+  text-align: left;
+  font-family: 'Bangers', cursive;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-shadow: none;
+}
+
+.restaurant-section .section-subtitle {
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 5px 0 30px 0;
+  text-align: left;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  letter-spacing: 0.3px;
+  text-shadow: none;
+}
+
 .restaurants-grid,
 .recipes-grid {
   display: grid;
@@ -126,6 +153,7 @@
 
 .restaurant-card,
 .recipe-card {
+  position: relative;
   background: white;
   border-radius: 15px;
   overflow: hidden;
@@ -137,6 +165,40 @@
 .recipe-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+}
+
+.restaurant-remove-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 10;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  padding: 0;
+  line-height: 1;
+}
+
+.restaurant-remove-button:hover {
+  background: rgba(255, 59, 48, 0.9);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: scale(1.1) rotate(90deg);
+  box-shadow: 0 4px 12px rgba(255, 59, 48, 0.5);
+}
+
+.restaurant-remove-button:active {
+  transform: scale(0.95) rotate(90deg);
 }
 
 .restaurant-card-image,
@@ -1310,6 +1372,19 @@
     font-size: 36px;
   }
 
+  .restaurant-section .section-title {
+    font-size: 36px;
+  }
+
+  .restaurant-section .section-subtitle {
+    font-size: 16px;
+    margin: 5px 0 25px 0;
+  }
+
+  .restaurant-section {
+    margin-bottom: 40px;
+  }
+
   .options-tabs {
     flex-wrap: wrap;
     gap: 8px;
@@ -1469,6 +1544,27 @@
   .options-title {
     font-size: 32px;
     margin-bottom: 15px;
+  }
+
+  .restaurant-section .section-title {
+    font-size: 30px;
+  }
+
+  .restaurant-section .section-subtitle {
+    font-size: 16px;
+    margin: 5px 0 20px 0;
+  }
+
+  .restaurant-section {
+    margin-bottom: 35px;
+  }
+
+  .restaurant-remove-button {
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+    top: 8px;
+    right: 8px;
   }
 
   .options-tabs {
@@ -1667,6 +1763,15 @@
 @media (max-width: 400px) {
   .options-title {
     font-size: 28px;
+  }
+
+  .restaurant-section .section-title {
+    font-size: 26px;
+  }
+
+  .restaurant-section .section-subtitle {
+    font-size: 15px;
+    margin: 5px 0 18px 0;
   }
 
   .tab-button {

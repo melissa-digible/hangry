@@ -27,7 +27,6 @@ function App() {
     openNow: false,
     priceRange: ['$', '$$', '$$$', '$$$$'],
   });
-  const [showDistanceSettings, setShowDistanceSettings] = useState(false);
   const [locationMode, setLocationMode] = useState<'auto' | 'manual'>('auto');
   const [manualLocation, setManualLocation] = useState('San Francisco, CA');
 
@@ -198,13 +197,6 @@ function App() {
             ⚙️
           </button>
           <button 
-            className="settings-button"
-            onClick={() => setShowDistanceSettings(!showDistanceSettings)}
-            title="Distance Settings"
-          >
-            📍
-          </button>
-          <button 
             className="options-button"
             onClick={() => setShowOptions(true)}
             disabled={yumCount === 0}
@@ -213,39 +205,6 @@ function App() {
           </button>
         </div>
       </div>
-
-      {showDistanceSettings && (
-        <div className="distance-settings">
-          <h3>Distance Preference</h3>
-          <div className="distance-controls">
-            <label>
-              Max Distance: {distancePreference.maxDistance} miles
-              <input
-                type="range"
-                min="1"
-                max="30"
-                value={distancePreference.maxDistance}
-                onChange={(e) => setDistancePreference({
-                  ...distancePreference,
-                  maxDistance: parseInt(e.target.value),
-                })}
-              />
-            </label>
-          </div>
-          {locationError && (
-            <p className="location-warning">⚠️ {locationError}</p>
-          )}
-          {userLocation && (
-            <p className="location-success">✓ Using your current location</p>
-          )}
-          <button 
-            className="location-button"
-            onClick={getUserLocation}
-          >
-            🔄 Refresh Location
-          </button>
-        </div>
-      )}
 
       <div className="swipe-container">
         {loading ? (

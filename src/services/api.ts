@@ -169,27 +169,55 @@ function analyzePreferences(preferences: UserPreference[]): {
   likedCuisines: Set<string>;
   dislikedCuisines: Set<string>;
   cuisineScores: Map<string, number>;
+  yuckCounts: Map<string, number>;
+  yumCounts: Map<string, number>;
 } {
   const likedCuisines = new Set<string>();
   const dislikedCuisines = new Set<string>();
   const cuisineScores = new Map<string, number>();
+  const yuckCounts = new Map<string, number>();
+  const yumCounts = new Map<string, number>();
 
+  // Track yucks and yums per cuisine to detect patterns
   preferences.forEach(pref => {
     pref.restaurant.cuisine.forEach(cuisine => {
       const lowerCuisine = cuisine.toLowerCase();
+      
       if (pref.preference === 'yum') {
         likedCuisines.add(lowerCuisine);
+        yumCounts.set(lowerCuisine, (yumCounts.get(lowerCuisine) || 0) + 1);
         cuisineScores.set(lowerCuisine, (cuisineScores.get(lowerCuisine) || 0) + 2);
       } else if (pref.preference === 'yuck') {
-        dislikedCuisines.add(lowerCuisine);
-        cuisineScores.set(lowerCuisine, (cuisineScores.get(lowerCuisine) || 0) - 3);
+        yuckCounts.set(lowerCuisine, (yuckCounts.get(lowerCuisine) || 0) + 1);
+        
+        // Only consider it truly disliked after 3+ yucks
+        // This allows for variation (e.g., disliking one Asian restaurant doesn't mean disliking all Asian food)
+        const yuckCount = yuckCounts.get(lowerCuisine) || 0;
+        const yumCount = yumCounts.get(lowerCuisine) || 0;
+        
+        // Only add to disliked if:
+        // 1. User has yucked this cuisine 3+ times, AND
+        // 2. They haven't yummed it more times than yucked it
+        if (yuckCount >= 3 && yuckCount > yumCount) {
+          dislikedCuisines.add(lowerCuisine);
+        }
+        
+        // Apply incremental penalties based on yuck count
+        // 1-2 yucks: very small penalty (exploring)
+        // 3+ yucks: moderate penalty (clear pattern)
+        if (yuckCount <= 2) {
+          cuisineScores.set(lowerCuisine, (cuisineScores.get(lowerCuisine) || 0) - 0.5);
+        } else {
+          cuisineScores.set(lowerCuisine, (cuisineScores.get(lowerCuisine) || 0) - 2);
+        }
       } else {
-        cuisineScores.set(lowerCuisine, (cuisineScores.get(lowerCuisine) || 0) - 0.5);
+        // "maybe" has minimal impact
+        cuisineScores.set(lowerCuisine, (cuisineScores.get(lowerCuisine) || 0) - 0.2);
       }
     });
   });
 
-  return { likedCuisines, dislikedCuisines, cuisineScores };
+  return { likedCuisines, dislikedCuisines, cuisineScores, yuckCounts, yumCounts };
 }
 
 export class RestaurantService {
@@ -438,7 +466,7 @@ export class RestaurantService {
     preferences: UserPreference[],
     maxDistance?: number
   ): Restaurant[] {
-    const { likedCuisines, dislikedCuisines, cuisineScores } = analyzePreferences(preferences);
+    const { likedCuisines, dislikedCuisines, cuisineScores, yuckCounts, yumCounts } = analyzePreferences(preferences);
     
     // Get IDs of restaurants that have been rated
     const ratedRestaurantIds = new Set(preferences.map(p => p.restaurantId));
@@ -447,30 +475,39 @@ export class RestaurantService {
     const scoredRestaurants = this.restaurants.map(restaurant => {
       // Skip restaurants that have already been rated
       if (ratedRestaurantIds.has(restaurant.id)) {
-        return { restaurant, score: -999 }; // Mark as already rated
+        return { restaurant, score: -999, hasDislikedCuisine: false, hasLikedCuisine: false }; // Mark as already rated
       }
       
       let score = restaurant.rating || 0;
       
       // Check cuisine matches
-      let hasDislikedCuisine = false;
+      let hasStronglyDislikedCuisine = false;
       let hasLikedCuisine = false;
+      let totalYuckCount = 0;
+      let totalYumCount = 0;
       
       restaurant.cuisine.forEach(cuisine => {
         const lowerCuisine = cuisine.toLowerCase();
         const cuisineScore = cuisineScores.get(lowerCuisine) || 0;
-        score += cuisineScore * 0.5; // Reduce the weight of cuisine scores
+        const yuckCount = yuckCounts.get(lowerCuisine) || 0;
+        const yumCount = yumCounts.get(lowerCuisine) || 0;
         
-        // Moderate penalty for disliked cuisines
+        totalYuckCount += yuckCount;
+        totalYumCount += yumCount;
+        
+        // Apply cuisine score with moderate weight
+        score += cuisineScore * 0.3;
+        
+        // Only apply strong penalty for cuisines with clear dislike pattern (3+ yucks)
         if (dislikedCuisines.has(lowerCuisine)) {
-          hasDislikedCuisine = true;
-          score -= 3; // Reduced from 10 to 3
+          hasStronglyDislikedCuisine = true;
+          score -= 2; // Moderate penalty only for strong patterns
         }
         
         // Bonus for liked cuisines
         if (likedCuisines.has(lowerCuisine)) {
           hasLikedCuisine = true;
-          score += 3; // Reduced from 5 to 3 for balance
+          score += 3;
         }
       });
 
@@ -480,26 +517,34 @@ export class RestaurantService {
         score += distanceScore;
       }
 
-      return { restaurant, score, hasDislikedCuisine, hasLikedCuisine };
+      return { restaurant, score, hasDislikedCuisine: hasStronglyDislikedCuisine, hasLikedCuisine, totalYuckCount, totalYumCount };
     });
 
-    // Filter out already rated restaurants and sort by score
-    // Use a more lenient threshold to keep more options
+    // Filter and sort by score
+    // Don't be too aggressive with filtering - only exclude if strongly disliked AND no positive signals
     const filtered = scoredRestaurants
-      .filter(item => item.score > -999) // Remove already rated restaurants
+      .filter(item => {
+        if (item.score === -999) return false; // Already rated
+        
+        // Keep restaurants unless they have strong dislike pattern AND no likes
+        if (item.hasDislikedCuisine && !item.hasLikedCuisine) {
+          // Still show if total yucks are relatively low (less than 5)
+          return item.totalYuckCount < 5;
+        }
+        
+        return true; // Keep everything else
+      })
       .sort((a, b) => {
-        // Prioritize liked cuisines, then avoid disliked, then by score
+        // Prioritize liked cuisines, then by score
         if (a.hasLikedCuisine && !b.hasLikedCuisine) return -1;
         if (!a.hasLikedCuisine && b.hasLikedCuisine) return 1;
-        if (a.hasDislikedCuisine && !b.hasDislikedCuisine) return 1;
-        if (!a.hasDislikedCuisine && b.hasDislikedCuisine) return -1;
         return b.score - a.score;
       })
       .map(item => item.restaurant);
 
-    // If filtered list is too small (less than 5), be more lenient
-    if (filtered.length < 5) {
-      // Include all unrated restaurants, even with disliked cuisines
+    // Always be lenient - keep at least 10 options if possible
+    if (filtered.length < 10) {
+      // Include more unrated restaurants, sorted by score
       const allUnrated = scoredRestaurants
         .filter(item => item.score > -999)
         .sort((a, b) => b.score - a.score)

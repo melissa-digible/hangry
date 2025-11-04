@@ -43,10 +43,13 @@
 }
 
 .section-title {
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 700;
   color: #333;
   margin: 0 0 10px 0;
+  font-family: 'Bangers', cursive;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
 }
 
 .section-description {
@@ -490,7 +493,7 @@
   }
 
   .section-title {
-    font-size: 20px;
+    font-size: 22px;
   }
 
   .section-description {
@@ -571,7 +574,7 @@
   }
 
   .section-title {
-    font-size: 18px;
+    font-size: 20px;
   }
 
   .section-description {
@@ -699,7 +702,7 @@
   }
 
   .section-title {
-    font-size: 17px;
+    font-size: 19px;
   }
 
   .preferences-section {

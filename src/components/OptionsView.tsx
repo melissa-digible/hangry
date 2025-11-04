@@ -13,6 +13,8 @@ type SortOption = 'default' | 'distance' | 'price' | 'rating';
 
 export default function OptionsView({ preferences, onBack }: OptionsViewProps) {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
+  const [yumRestaurants, setYumRestaurants] = useState<Restaurant[]>([]);
+  const [recommendedRestaurants, setRecommendedRestaurants] = useState<Restaurant[]>([]);
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'restaurants' | 'recipes'>('restaurants');
@@ -27,6 +29,7 @@ export default function OptionsView({ preferences, onBack }: OptionsViewProps) {
   const [eliminationEffect, setEliminationEffect] = useState<'burn' | 'chop'>('burn');
   const [winningId, setWinningId] = useState<string | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [removedRestaurantIds, setRemovedRestaurantIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     loadOptions();
@@ -67,7 +70,7 @@ export default function OptionsView({ preferences, onBack }: OptionsViewProps) {
     );
     
     // ALWAYS include yum restaurants first, then add similar ones
-    const yumRestaurants = yumPreferences.map(p => p.restaurant);
+    const yumRestaurantsData = yumPreferences.map(p => p.restaurant);
     const additionalRestaurants = similarRestaurants.filter(r => 
       !yumRestaurantIds.has(r.id) && 
       !yuckRestaurantIds.has(r.id) &&
@@ -76,12 +79,14 @@ export default function OptionsView({ preferences, onBack }: OptionsViewProps) {
     
     // Combine with yum restaurants always first
     const uniqueRestaurants = [
-      ...yumRestaurants,
+      ...yumRestaurantsData,
       ...additionalRestaurants
     ];
     
-    console.log('OptionsView: Loaded', yumRestaurants.length, 'yum restaurants and', additionalRestaurants.length, 'similar restaurants');
+    console.log('OptionsView: Loaded', yumRestaurantsData.length, 'yum restaurants and', additionalRestaurants.length, 'similar restaurants');
     setRestaurants(uniqueRestaurants);
+    setYumRestaurants(yumRestaurantsData);
+    setRecommendedRestaurants(additionalRestaurants);
 
     // Get recipes similar to restaurant dishes
     try {
@@ -205,8 +210,14 @@ export default function OptionsView({ preferences, onBack }: OptionsViewProps) {
     setIsTransitioning(false);
   };
 
-  const getSortedRestaurants = (): Restaurant[] => {
-    const sorted = [...restaurants];
+  const removeRestaurant = (restaurantId: string) => {
+    setRemovedRestaurantIds(prev => new Set([...prev, restaurantId]));
+  };
+
+  const getSortedRestaurants = (restaurantList: Restaurant[]): Restaurant[] => {
+    // Filter out removed restaurants
+    const filtered = restaurantList.filter(r => !removedRestaurantIds.has(r.id));
+    const sorted = [...filtered];
     
     switch (sortBy) {
       case 'distance':
@@ -588,7 +599,7 @@ export default function OptionsView({ preferences, onBack }: OptionsViewProps) {
             className={`tab-button ${activeTab === 'restaurants' ? 'active' : ''}`}
             onClick={() => setActiveTab('restaurants')}
           >
-            Restaurants ({restaurants.length})
+            Restaurants ({restaurants.filter(r => !removedRestaurantIds.has(r.id)).length})
           </button>
           <button
             className={`tab-button ${activeTab === 'recipes' ? 'active' : ''}`}
@@ -599,7 +610,7 @@ export default function OptionsView({ preferences, onBack }: OptionsViewProps) {
           <button
             className={`tab-button tab-button-duel`}
             onClick={showDuelSelection}
-            disabled={restaurants.length < 2}
+            disabled={restaurants.filter(r => !removedRestaurantIds.has(r.id)).length < 2}
           >
             ⚔️ Duel Mode
           </button>
@@ -625,55 +636,137 @@ export default function OptionsView({ preferences, onBack }: OptionsViewProps) {
 
       <div className="options-content">
         {activeTab === 'restaurants' ? (
-          <div className="restaurants-grid">
-            {restaurants.length === 0 ? (
+          <>
+            {restaurants.filter(r => !removedRestaurantIds.has(r.id)).length === 0 ? (
               <div className="empty-state">
-                <p>No restaurants found. Start swiping to add preferences!</p>
+                <p>{restaurants.length === 0 ? 'No restaurants found. Start swiping to add preferences!' : 'All restaurants have been removed. Go back to swiping to find more!'}</p>
               </div>
             ) : (
-              getSortedRestaurants().map(restaurant => (
-                <div 
-                  key={restaurant.id} 
-                  className="restaurant-card"
-                  onClick={() => setSelectedRestaurant(restaurant)}
-                  style={{ cursor: 'pointer' }}
-                >
-                  <img 
-                    src={restaurant.image} 
-                    alt={restaurant.name}
-                    className="restaurant-card-image"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = 'https://via.placeholder.com/300x200?text=Food';
-                    }}
-                  />
-                  <div className="restaurant-card-content">
-                    <h3 className="restaurant-card-name">{restaurant.name}</h3>
-                    <div className="restaurant-card-meta">
-                      <span className="restaurant-rating">⭐ {restaurant.rating}</span>
-                      {restaurant.price && (
-                        <span className="restaurant-price">{restaurant.price}</span>
-                      )}
-                      {restaurant.distance !== undefined && (
-                        <span className="restaurant-distance">
-                          📍 {restaurant.distance < 1000 
-                            ? `${Math.round(restaurant.distance)}m` 
-                            : `${(restaurant.distance / 1609.34).toFixed(1)} miles`}
-                        </span>
-                      )}
-                    </div>
-                    <div className="restaurant-cuisine">
-                      {restaurant.cuisine.map((cuisine, index) => (
-                        <span key={index} className="cuisine-badge">{cuisine}</span>
+              <>
+                {/* Yum Restaurants Section */}
+                {getSortedRestaurants(yumRestaurants).length > 0 && (
+                  <div className="restaurant-section">
+                    <h2 className="section-title">😋 Your Yum Picks</h2>
+                    <p className="section-subtitle">Restaurants you marked as "Yum"</p>
+                    <div className="restaurants-grid">
+                      {getSortedRestaurants(yumRestaurants).map(restaurant => (
+                        <div 
+                          key={restaurant.id} 
+                          className="restaurant-card"
+                        >
+                          <button
+                            className="restaurant-remove-button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              removeRestaurant(restaurant.id);
+                            }}
+                            aria-label="Remove restaurant"
+                          >
+                            ✕
+                          </button>
+                          <div onClick={() => setSelectedRestaurant(restaurant)} style={{ cursor: 'pointer' }}>
+                            <img 
+                              src={restaurant.image} 
+                              alt={restaurant.name}
+                              className="restaurant-card-image"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).src = 'https://via.placeholder.com/300x200?text=Food';
+                              }}
+                            />
+                            <div className="restaurant-card-content">
+                              <h3 className="restaurant-card-name">{restaurant.name}</h3>
+                              <div className="restaurant-card-meta">
+                                <span className="restaurant-rating">⭐ {restaurant.rating}</span>
+                                {restaurant.price && (
+                                  <span className="restaurant-price">{restaurant.price}</span>
+                                )}
+                                {restaurant.distance !== undefined && (
+                                  <span className="restaurant-distance">
+                                    📍 {restaurant.distance < 1000 
+                                      ? `${Math.round(restaurant.distance)}m` 
+                                      : `${(restaurant.distance / 1609.34).toFixed(1)} miles`}
+                                  </span>
+                                )}
+                              </div>
+                              <div className="restaurant-cuisine">
+                                {restaurant.cuisine.map((cuisine, index) => (
+                                  <span key={index} className="cuisine-badge">{cuisine}</span>
+                                ))}
+                              </div>
+                              <button className="restaurant-view-details">
+                                View Details →
+                              </button>
+                            </div>
+                          </div>
+                        </div>
                       ))}
                     </div>
-                    <button className="restaurant-view-details">
-                      View Details →
-                    </button>
                   </div>
-                </div>
-              ))
+                )}
+
+                {/* Recommended Restaurants Section */}
+                {getSortedRestaurants(recommendedRestaurants).length > 0 && (
+                  <div className="restaurant-section">
+                    <h2 className="section-title">🎯 Similar Recommendations</h2>
+                    <p className="section-subtitle">Other restaurants you might like</p>
+                    <div className="restaurants-grid">
+                      {getSortedRestaurants(recommendedRestaurants).map(restaurant => (
+                        <div 
+                          key={restaurant.id} 
+                          className="restaurant-card"
+                        >
+                          <button
+                            className="restaurant-remove-button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              removeRestaurant(restaurant.id);
+                            }}
+                            aria-label="Remove restaurant"
+                          >
+                            ✕
+                          </button>
+                          <div onClick={() => setSelectedRestaurant(restaurant)} style={{ cursor: 'pointer' }}>
+                            <img 
+                              src={restaurant.image} 
+                              alt={restaurant.name}
+                              className="restaurant-card-image"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).src = 'https://via.placeholder.com/300x200?text=Food';
+                              }}
+                            />
+                            <div className="restaurant-card-content">
+                              <h3 className="restaurant-card-name">{restaurant.name}</h3>
+                              <div className="restaurant-card-meta">
+                                <span className="restaurant-rating">⭐ {restaurant.rating}</span>
+                                {restaurant.price && (
+                                  <span className="restaurant-price">{restaurant.price}</span>
+                                )}
+                                {restaurant.distance !== undefined && (
+                                  <span className="restaurant-distance">
+                                    📍 {restaurant.distance < 1000 
+                                      ? `${Math.round(restaurant.distance)}m` 
+                                      : `${(restaurant.distance / 1609.34).toFixed(1)} miles`}
+                                  </span>
+                                )}
+                              </div>
+                              <div className="restaurant-cuisine">
+                                {restaurant.cuisine.map((cuisine, index) => (
+                                  <span key={index} className="cuisine-badge">{cuisine}</span>
+                                ))}
+                              </div>
+                              <button className="restaurant-view-details">
+                                View Details →
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </>
             )}
-          </div>
+          </>
         ) : (
           <div className="recipes-grid">
             {recipes.length === 0 ? (
