@@ -475,7 +475,7 @@ export class RestaurantService {
     const scoredRestaurants = this.restaurants.map(restaurant => {
       // Skip restaurants that have already been rated
       if (ratedRestaurantIds.has(restaurant.id)) {
-        return { restaurant, score: -999, hasDislikedCuisine: false, hasLikedCuisine: false }; // Mark as already rated
+        return { restaurant, score: -999, hasDislikedCuisine: false, hasLikedCuisine: false, totalYuckCount: 0, totalYumCount: 0 }; // Mark as already rated
       }
       
       let score = restaurant.rating || 0;
