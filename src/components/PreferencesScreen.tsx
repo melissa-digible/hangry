@@ -161,8 +161,22 @@ export default function PreferencesScreen({
         {/* Price Range Section */}
         <div className="preferences-section">
           <h2 className="section-title">💰 Price Range</h2>
-          <p className="section-description">Select price levels you're comfortable with</p>
+          <p className="section-description">Select price levels you're comfortable with (click to toggle on/off)</p>
           <div className="section-content">
+            <div className="price-selection-controls">
+              <button
+                className="price-control-button"
+                onClick={() => setPriceRange(['$', '$$', '$$$', '$$$$'])}
+              >
+                Select All
+              </button>
+              <button
+                className="price-control-button"
+                onClick={() => setPriceRange([])}
+              >
+                Clear All
+              </button>
+            </div>
             <div className="price-grid">
               {PRICE_LEVELS.map(price => (
                 <button
@@ -170,6 +184,7 @@ export default function PreferencesScreen({
                   className={`price-option ${priceRange.includes(price.value) ? 'selected' : ''}`}
                   onClick={() => togglePrice(price.value)}
                 >
+                  <div className="price-checkbox">{priceRange.includes(price.value) ? '✓' : ''}</div>
                   <div className="price-symbol">{price.value}</div>
                   <div className="price-label">{price.label}</div>
                   <div className="price-description">{price.description}</div>
