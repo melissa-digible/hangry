@@ -4,10 +4,8 @@ import { Restaurant, Recipe, LocationData, UserPreference, FilterPreferences } f
 // Yelp Fusion API Configuration
 // Note: In production, these should be stored in environment variables
 const YELP_API_KEY = import.meta.env.VITE_YELP_API_KEY || '';
-// Use proxy in development to avoid CORS issues
-const YELP_BASE_URL = import.meta.env.DEV 
-  ? '/api/yelp' 
-  : 'https://api.yelp.com/v3';
+// Use proxy/serverless function to avoid CORS issues
+const YELP_BASE_URL = '/api/yelp';
 
 // Debug: Log API key status (remove in production)
 console.log('Yelp API Key loaded:', YELP_API_KEY ? 'Yes (length: ' + YELP_API_KEY.length + ')' : 'No');
