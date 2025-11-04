@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Restaurant, Preference, UserPreference, LocationData, DistancePreference } from './types';
+import { Restaurant, Preference, UserPreference, LocationData, DistancePreference, FilterPreferences } from './types';
 import { RestaurantService } from './services/api';
 import FoodCard from './components/FoodCard';
 import OptionsView from './components/OptionsView';
+import PreferencesScreen from './components/PreferencesScreen';
 import { motion, AnimatePresence } from 'framer-motion';
 import './App.css';
 
@@ -12,13 +13,19 @@ function App() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [preferences, setPreferences] = useState<UserPreference[]>([]);
   const [showOptions, setShowOptions] = useState(false);
+  const [showPreferences, setShowPreferences] = useState(true); // Show preferences screen first
   const [loading, setLoading] = useState(true);
   const [swipeDirection, setSwipeDirection] = useState<'left' | 'right' | 'maybe' | null>(null);
   const [userLocation, setUserLocation] = useState<LocationData | null>(null);
   const [locationError, setLocationError] = useState<string | null>(null);
   const [distancePreference, setDistancePreference] = useState<DistancePreference>({
-    maxDistance: 10, // 10km default
-    unit: 'km',
+    maxDistance: 10, // 10 miles default
+    unit: 'miles',
+  });
+  const [filterPreferences, setFilterPreferences] = useState<FilterPreferences>({
+    excludedCategories: [],
+    openNow: false,
+    priceRange: ['$', '$$', '$$$', '$$$$'],
   });
   const [showDistanceSettings, setShowDistanceSettings] = useState(false);
 
@@ -28,35 +35,37 @@ function App() {
 
   useEffect(() => {
     const loadRestaurantsAsync = async () => {
+      // Don't load restaurants until preferences are set
+      if (showPreferences) return;
+      
       setLoading(true);
       const restaurantService = RestaurantService.getInstance();
-      const maxDistanceMeters = distancePreference.unit === 'km' 
-        ? distancePreference.maxDistance * 1000 
-        : distancePreference.maxDistance * 1609.34; // miles to meters
+      // Convert miles to meters for API call
+      const maxDistanceMeters = distancePreference.maxDistance * 1609.34;
       
       const fetchedRestaurants = await restaurantService.fetchRestaurants(
         userLocation || undefined,
         'San Francisco',
         50,
-        maxDistanceMeters
+        maxDistanceMeters,
+        filterPreferences
       );
       setRestaurants(fetchedRestaurants);
       setFilteredRestaurants(fetchedRestaurants);
       setLoading(false);
     };
 
-    if (userLocation || locationError) {
+    if ((userLocation || locationError) && !showPreferences) {
       loadRestaurantsAsync();
     }
-  }, [userLocation, distancePreference, locationError]);
+  }, [userLocation, distancePreference, locationError, showPreferences, filterPreferences]);
 
   useEffect(() => {
-    // Apply preference-based filtering when preferences change
+      // Apply preference-based filtering when preferences change
     if (restaurants.length > 0 && preferences.length > 0) {
       const restaurantService = RestaurantService.getInstance();
-      const maxDistanceMeters = distancePreference.unit === 'km' 
-        ? distancePreference.maxDistance * 1000 
-        : distancePreference.maxDistance * 1609.34;
+      // Convert miles to meters for filtering
+      const maxDistanceMeters = distancePreference.maxDistance * 1609.34;
       
       const filtered = restaurantService.getFilteredRestaurants(preferences, maxDistanceMeters);
       setFilteredRestaurants(filtered);
@@ -101,19 +110,28 @@ function App() {
   const loadRestaurants = async () => {
     setLoading(true);
     const restaurantService = RestaurantService.getInstance();
-    const maxDistanceMeters = distancePreference.unit === 'km' 
-      ? distancePreference.maxDistance * 1000 
-      : distancePreference.maxDistance * 1609.34; // miles to meters
+    // Convert miles to meters for API call
+    const maxDistanceMeters = distancePreference.maxDistance * 1609.34;
     
     const fetchedRestaurants = await restaurantService.fetchRestaurants(
       userLocation || undefined,
       'San Francisco',
       50,
-      maxDistanceMeters
+      maxDistanceMeters,
+      filterPreferences
     );
     setRestaurants(fetchedRestaurants);
     setFilteredRestaurants(fetchedRestaurants);
     setLoading(false);
+  };
+
+  const handleStartSwiping = (prefs: FilterPreferences, maxDist: number) => {
+    setFilterPreferences(prefs);
+    setDistancePreference({
+      maxDistance: maxDist,
+      unit: 'miles',
+    });
+    setShowPreferences(false);
   };
 
   const handleSwipe = (preference: Preference) => {
@@ -149,6 +167,18 @@ function App() {
   const currentRestaurant = restaurantsToUse[currentIndex];
   const yumCount = preferences.filter(p => p.preference === 'yum').length;
 
+  // Show preferences screen first
+  if (showPreferences) {
+    return (
+      <PreferencesScreen 
+        onStart={handleStartSwiping}
+        userLocation={userLocation}
+        locationError={locationError}
+        onRefreshLocation={getUserLocation}
+      />
+    );
+  }
+
   if (showOptions) {
     return <OptionsView preferences={preferences} onBack={() => setShowOptions(false)} />;
   }
@@ -158,6 +188,13 @@ function App() {
       <div className="app-header">
         <h1 className="app-title">🍽️ Hangry</h1>
         <div className="header-actions">
+          <button 
+            className="settings-button"
+            onClick={() => setShowPreferences(true)}
+            title="Preferences"
+          >
+            ⚙️
+          </button>
           <button 
             className="settings-button"
             onClick={() => setShowDistanceSettings(!showDistanceSettings)}
@@ -180,11 +217,11 @@ function App() {
           <h3>Distance Preference</h3>
           <div className="distance-controls">
             <label>
-              Max Distance: {distancePreference.maxDistance} {distancePreference.unit}
+              Max Distance: {distancePreference.maxDistance} miles
               <input
                 type="range"
                 min="1"
-                max={distancePreference.unit === 'km' ? '50' : '30'}
+                max="30"
                 value={distancePreference.maxDistance}
                 onChange={(e) => setDistancePreference({
                   ...distancePreference,
@@ -192,36 +229,6 @@ function App() {
                 })}
               />
             </label>
-            <div className="unit-toggle">
-              <button
-                className={distancePreference.unit === 'km' ? 'active' : ''}
-                onClick={() => {
-                  const newValue = distancePreference.unit === 'miles' 
-                    ? Math.round(distancePreference.maxDistance * 1.60934)
-                    : distancePreference.maxDistance;
-                  setDistancePreference({
-                    maxDistance: newValue,
-                    unit: 'km',
-                  });
-                }}
-              >
-                km
-              </button>
-              <button
-                className={distancePreference.unit === 'miles' ? 'active' : ''}
-                onClick={() => {
-                  const newValue = distancePreference.unit === 'km' 
-                    ? Math.round(distancePreference.maxDistance / 1.60934)
-                    : distancePreference.maxDistance;
-                  setDistancePreference({
-                    maxDistance: newValue,
-                    unit: 'miles',
-                  });
-                }}
-              >
-                miles
-              </button>
-            </div>
           </div>
           {locationError && (
             <p className="location-warning">⚠️ {locationError}</p>
@@ -320,7 +327,7 @@ function App() {
               onClick={() => {
                 setCurrentIndex(0);
                 setPreferences([]);
-                setFilteredRestaurants(restaurants);
+                setShowPreferences(true); // Show preferences screen again
               }}
             >
               Start Over

@@ -1,0 +1,560 @@
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.restaurant-modal {
+  background: white;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 900px;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  animation: slideUp 0.3s ease;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+/* Ensure consistent structure */
+.restaurant-modal > .modal-header {
+  flex-shrink: 0;
+}
+
+.restaurant-modal > .modal-nav {
+  flex-shrink: 0;
+}
+
+.restaurant-modal > .modal-content {
+  flex: 1;
+  min-height: 0;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  border: none;
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: all 0.3s ease;
+}
+
+.modal-close:hover {
+  background: rgba(0, 0, 0, 0.8);
+  transform: rotate(90deg);
+}
+
+/* Header */
+.modal-header {
+  position: relative;
+  height: 300px;
+  overflow: hidden;
+}
+
+.modal-header-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.modal-header-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.4) 70%, transparent 100%);
+  padding: 30px;
+  color: white;
+}
+
+.modal-restaurant-name {
+  margin: 0 0 10px 0;
+  font-size: 32px;
+  font-weight: 700;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.modal-restaurant-meta {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 10px;
+  font-size: 16px;
+  flex-wrap: wrap;
+}
+
+.modal-rating,
+.modal-price,
+.modal-distance {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+.modal-cuisine-tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.modal-cuisine-tag {
+  background: rgba(102, 126, 234, 0.9);
+  padding: 5px 12px;
+  border-radius: 15px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Navigation */
+.modal-nav {
+  display: flex;
+  gap: 8px;
+  padding: 0 24px;
+  background: white;
+  overflow-x: auto;
+  position: relative;
+}
+
+.modal-nav::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #f0f0f0;
+  z-index: 0;
+}
+
+.modal-nav-button {
+  flex: 1;
+  padding: 18px 20px;
+  border: none;
+  background: transparent;
+  color: #666;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  position: relative;
+  z-index: 1;
+}
+
+.modal-nav-button::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: transparent;
+  transition: background-color 0.3s ease;
+}
+
+.modal-nav-button:hover {
+  color: #667eea;
+  background: rgba(102, 126, 234, 0.05);
+}
+
+.modal-nav-button.active {
+  color: #667eea;
+  background: rgba(102, 126, 234, 0.1);
+}
+
+.modal-nav-button.active::after {
+  background-color: #667eea;
+}
+
+/* Content */
+.modal-content {
+  overflow-y: auto;
+  flex: 1;
+  padding: 30px;
+  background: #fafafa;
+}
+
+.modal-section h2 {
+  margin: 0 0 20px 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: #333;
+}
+
+/* Details Section */
+.detail-group {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.detail-group h3 {
+  margin: 0 0 12px 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #667eea;
+}
+
+.detail-group p {
+  margin: 0;
+  color: #666;
+  line-height: 1.6;
+}
+
+.hours-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.hours-row:last-child {
+  border-bottom: none;
+}
+
+.hours-day {
+  font-weight: 600;
+  color: #333;
+}
+
+.hours-time {
+  color: #666;
+}
+
+.cuisine-list {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.cuisine-item {
+  background: #667eea;
+  color: white;
+  padding: 6px 15px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.price-indicator {
+  font-size: 24px;
+  font-weight: 700;
+  color: #667eea;
+  margin: 5px 0;
+}
+
+.price-description {
+  color: #999;
+  font-size: 14px;
+}
+
+.yelp-link {
+  display: inline-block;
+  margin-top: 10px;
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.yelp-link:hover {
+  color: #764ba2;
+}
+
+/* Photos Section */
+.photos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.photo-item {
+  border-radius: 12px;
+  overflow: hidden;
+  aspect-ratio: 4/3;
+  background: #f0f0f0;
+}
+
+.photo-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.photo-item:hover img {
+  transform: scale(1.05);
+}
+
+.empty-photos {
+  text-align: center;
+  padding: 20px;
+}
+
+.single-photo {
+  max-width: 500px;
+  width: 100%;
+  border-radius: 12px;
+  margin-bottom: 15px;
+}
+
+.photos-note {
+  text-align: center;
+  margin-top: 20px;
+  padding: 15px;
+  background: white;
+  border-radius: 12px;
+}
+
+.photos-note p {
+  margin: 0;
+  color: #666;
+}
+
+/* Reviews Section */
+.reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.review-card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+  gap: 15px;
+}
+
+.review-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.review-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.review-username {
+  font-weight: 600;
+  color: #333;
+}
+
+.review-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+}
+
+.review-rating {
+  color: #f5a623;
+  font-size: 14px;
+}
+
+.review-date {
+  color: #999;
+  font-size: 13px;
+}
+
+.review-text {
+  margin: 0;
+  color: #666;
+  line-height: 1.6;
+}
+
+/* Recipes Section */
+.recipes-intro {
+  background: white;
+  padding: 15px 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  color: #666;
+  text-align: center;
+  font-size: 16px;
+}
+
+.recipes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.recipe-card-modal {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.recipe-card-modal:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+}
+
+.recipe-card-image-modal {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.recipe-card-content-modal {
+  padding: 15px;
+}
+
+.recipe-title-modal {
+  margin: 0 0 10px 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #333;
+}
+
+.recipe-meta-modal {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 10px;
+  font-size: 13px;
+  color: #666;
+}
+
+.recipe-summary-modal {
+  margin: 0 0 12px 0;
+  font-size: 13px;
+  color: #666;
+  line-height: 1.5;
+}
+
+.recipe-link-modal {
+  display: inline-block;
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  transition: color 0.3s ease;
+}
+
+.recipe-link-modal:hover {
+  color: #764ba2;
+}
+
+/* Loading and Empty States */
+.loading-message {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+  font-size: 16px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+}
+
+.empty-state p {
+  margin: 0 0 15px 0;
+  font-size: 16px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .modal-backdrop {
+    padding: 0;
+  }
+
+  .restaurant-modal {
+    max-width: 100%;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+
+  .modal-header {
+    height: 250px;
+  }
+
+  .modal-restaurant-name {
+    font-size: 24px;
+  }
+
+  .modal-content {
+    padding: 20px;
+  }
+
+  .modal-section h2 {
+    font-size: 22px;
+  }
+
+  .photos-grid,
+  .recipes-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .review-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .review-meta {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+

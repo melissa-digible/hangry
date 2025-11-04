@@ -46,6 +46,12 @@ export interface LocationData {
 
 export interface DistancePreference {
   maxDistance: number; // in meters
-  unit: 'km' | 'miles';
+  unit: 'miles';
+}
+
+export interface FilterPreferences {
+  excludedCategories: string[]; // Categories to exclude (e.g., 'Coffee & Tea', 'Fast Food')
+  openNow: boolean; // Only show restaurants open now
+  priceRange: string[]; // Array of price levels: ['$', '$$', '$$$', '$$$$']
 }
 
