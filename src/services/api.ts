@@ -144,66 +144,6 @@ const MOCK_RESTAURANTS: Restaurant[] = [
   },
 ];
 
-// Helper function to get food image from Unsplash based on cuisine
-async function getFoodImage(cuisineTypes: string[], restaurantName: string): Promise<string> {
-  // Try to get a food image from Unsplash based on cuisine
-  if (UNSPLASH_ACCESS_KEY) {
-    try {
-      // Use the first cuisine type as search term
-      const searchTerm = cuisineTypes[0] || restaurantName.split(' ')[0];
-      const response = await axios.get(`${UNSPLASH_BASE_URL}/search/photos`, {
-        headers: {
-          'Authorization': `Client-ID ${UNSPLASH_ACCESS_KEY}`,
-        },
-        params: {
-          query: `${searchTerm} food`,
-          orientation: 'portrait',
-          per_page: 1,
-        },
-      });
-      
-      if (response.data.results && response.data.results.length > 0) {
-        return response.data.results[0].urls.regular;
-      }
-    } catch (error) {
-      console.error('Error fetching from Unsplash:', error);
-    }
-  }
-  
-  // Fallback: Use curated food images based on cuisine type
-  const foodImages: Record<string, string> = {
-    'italian': 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800',
-    'pasta': 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800',
-    'pizza': 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800',
-    'japanese': 'https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?w=800',
-    'sushi': 'https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?w=800',
-    'ramen': 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=800',
-    'american': 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800',
-    'burger': 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800',
-    'bbq': 'https://images.unsplash.com/photo-1528607929212-2636ec44253e?w=800',
-    'mexican': 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800',
-    'taco': 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800',
-    'thai': 'https://images.unsplash.com/photo-1559314809-0d155014e29e?w=800',
-    'asian': 'https://images.unsplash.com/photo-1559314809-0d155014e29e?w=800',
-    'chinese': 'https://images.unsplash.com/photo-1534939561126-855b8675edd7?w=800',
-    'indian': 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=800',
-    'seafood': 'https://images.unsplash.com/photo-1559339352-11d035aa65de?w=800',
-    'mediterranean': 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800',
-    'french': 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800',
-    'greek': 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800',
-  };
-  
-  for (const cuisineType of cuisineTypes) {
-    const lowerCuisine = cuisineType.toLowerCase();
-    if (foodImages[lowerCuisine]) {
-      return foodImages[lowerCuisine];
-    }
-  }
-  
-  // Default food image
-  return 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800';
-}
-
 // Calculate distance between two coordinates using Haversine formula
 function calculateDistance(
   lat1: number,

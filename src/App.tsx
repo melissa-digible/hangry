@@ -107,24 +107,6 @@ function App() {
     );
   };
 
-  const loadRestaurants = async () => {
-    setLoading(true);
-    const restaurantService = RestaurantService.getInstance();
-    // Convert miles to meters for API call
-    const maxDistanceMeters = distancePreference.maxDistance * 1609.34;
-    
-    const fetchedRestaurants = await restaurantService.fetchRestaurants(
-      userLocation || undefined,
-      'San Francisco',
-      50,
-      maxDistanceMeters,
-      filterPreferences
-    );
-    setRestaurants(fetchedRestaurants);
-    setFilteredRestaurants(fetchedRestaurants);
-    setLoading(false);
-  };
-
   const handleStartSwiping = (prefs: FilterPreferences, maxDist: number) => {
     setFilterPreferences(prefs);
     setDistancePreference({
